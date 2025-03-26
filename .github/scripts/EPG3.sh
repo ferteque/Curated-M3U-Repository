@@ -9,7 +9,7 @@ COMPRESSED_FILE="epg3.xml.gz"
 wget -O "$OUTPUT_FILE" "$EPG_URL"
 
 # Modificar la etiqueta <tv generator-info-name>
-sed -i "s|<tv generator-info-name=\".*\">|<tv generator-info-name=\"EPG 3\">|g" "$OUTPUT_FILE"
+sed -i "s|<tv generator-info-name=\"[^\"]*\">|<tv generator-info-name=\"EPG 3\">|g" "$OUTPUT_FILE"
 
 # Comprimir el archivo
 gzip -f "$OUTPUT_FILE"

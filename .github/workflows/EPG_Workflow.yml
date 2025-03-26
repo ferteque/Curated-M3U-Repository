@@ -18,7 +18,12 @@ jobs:
       - name: Execute
         run: |
           chmod +x .github/scripts/*
-          .github/scripts/*.sh
+          for script in .github/scripts/*.sh
+            do
+              if [[ -f "$script" && -x "$script" ]]; then
+                "$script"  
+              fi
+            done
 
       - name: Update
         uses: stefanzweifel/git-auto-commit-action@v5
