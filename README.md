@@ -10,29 +10,29 @@ Now, how does this work:
 
 UPLOAD REQUEST:
 
-Download your M3U file from your IPTV Editor.
+1. Download your M3U file from your IPTV Editor.
 
-Open it with the windows notepad (or any other text editor)
+2. Open it with the windows notepad (or any other text editor)
 
-Using the "Search and replace" feature, search by your credentials (i.e. http://xxxxx.xxxx-xxx/12345678/12345678) and replace it with http://DNS/USERNAME/PASSWORD
+3. Using the "Search and replace" feature, search by your credentials (i.e. http://xxxxx.xxxx-xxx/12345678/12345678) and replace it with http://DNS/USERNAME/PASSWORD
 
-Make sure you are also doing it for Movies and TV Shows if you are including them in your lists (i.e. http://xxxx.xxx-xxx/movie/12345678/12345678) and replace with http://DNS/movie/USERNAME/PASSWORD
+4. Make sure you are also doing it for Movies and TV Shows if you are including them in your lists (i.e. http://xxxx.xxx-xxx/movie/12345678/12345678) and replace with http://DNS/movie/USERNAME/PASSWORD
 
-Make an upload request to this Google Form: https://forms.gle/ufrnmrwF5RhGZXyJA
+5. Make an upload request to this Google Form: https://forms.gle/ufrnmrwF5RhGZXyJA
 
 USING AN M3U FILE
 
-Download the M3U file that fits you best from this Google Sheet: https://docs.google.com/spreadsheets/d/1JZ3K-7VKtXdZfnqcUBU2Mv2cGKwgWa73NACNQFrylD4/edit?usp=sharing
+1. Download the M3U file that fits you best from this Google Sheet: https://docs.google.com/spreadsheets/d/1JZ3K-7VKtXdZfnqcUBU2Mv2cGKwgWa73NACNQFrylD4/edit?usp=sharing
 
-Open it with the Windows notepad (or any other text editor)
+2. Open it with the Windows notepad (or any other text editor)
 
-Using the "Search and replace" feature, search by http://DNS/USERNAME/PASSWORD and replace it with your credentials (i.e. http://xxxxx.xxxx-xxx/12345678/12345678)
+3. Using the "Search and replace" feature, search by http://DNS/USERNAME/PASSWORD and replace it with your credentials (i.e. http://xxxxx.xxxx-xxx/12345678/12345678)
 
-Make sure you are also doing it for Movies and TV Shows if they are included in that list searching by http://DNS/movie/USERNAME/PASSWORD and replacing it with your credentials (i.e. http://xxxx.xxx-xxx/movie/12345678/12345678)
+4. Make sure you are also doing it for Movies and TV Shows if they are included in that list searching by http://DNS/movie/USERNAME/PASSWORD and replacing it with your credentials (i.e. http://xxxx.xxx-xxx/movie/12345678/12345678)
 
-Upload the M3U file to your IPTV player. You can also use it in your IPTV Editor as a starting point.
+5. Upload the M3U file to your IPTV player. You can also use it in your IPTV Editor as a starting point.
 
-If you are going to add the EPG to IPTV Editor, use the GitHub link, it is updated once a day (3 a.m. UTC). It may fail when adding it, retry until it works. If it says the EPG is empty, delete it and add it again, until it works.
+6. If you are going to add the EPG to IPTV Editor, use the GitHub link, it is updated once a day (3 a.m. UTC). It may fail when adding it, retry until it works. If it says the EPG is empty, delete it and add it again, until it works.
 
 DISCLAIMERS:
 
