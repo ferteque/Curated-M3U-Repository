@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Variables
-EPG_URL="https://opop.pro/tzrVuM4EZku2x"
-OUTPUT_FILE="epg2.xml"
-COMPRESSED_FILE="epg2.xml.gz"
+EPG_URL="https://opop.pro/V3GU6m2TMuu6"
+OUTPUT_FILE="epg4.xml"
+COMPRESSED_FILE="epg4.xml.gz"
 
 # Descargar el archivo EPG
 wget -O "$OUTPUT_FILE" "$EPG_URL"
