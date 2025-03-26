@@ -21,7 +21,9 @@ jobs:
           for script in .github/scripts/*.sh
             do
               if [[ -f "$script" && -x "$script" ]]; then
+                  echo "Executing script"
                 "$script"  
+                cat $script
               fi
             done
 
