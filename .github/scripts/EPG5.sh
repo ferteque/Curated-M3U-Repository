@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variables
-EPG_URL="https://opop.pro/7b4FekGEL8a2ScZ"
+EPG_URL="https://opop.pro/wnbYVUzuNKmn"
 OUTPUT_FILE="epg5.xml"
 COMPRESSED_FILE="epg5.xml.gz"
 DATE=$(date +"%Y-%m-%d %H:%M:%S")
