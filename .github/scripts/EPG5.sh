@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # Variables
-EPG_URL="https://opop.pro/V3GU6m2TMuu6"
-OUTPUT_FILE="epg4.xml"
-COMPRESSED_FILE="epg4.xml.gz"
+EPG_URL="https://opop.pro/7b4FekGEL8a2ScZ"
+OUTPUT_FILE="epg5.xml"
+COMPRESSED_FILE="epg5.xml.gz"
 DATE=$(date +"%Y-%m-%d %H:%M:%S")
 
 # Descargar el archivo EPG
 wget -O "$OUTPUT_FILE" "$EPG_URL"
 
 # Modificar la etiqueta <tv generator-info-name>
-sed -i 's|\(<tv generator-info-name="\)[^"]*|\1EPG 4|' "$OUTPUT_FILE" 
+sed -i 's|\(<tv generator-info-name="\)[^"]*|\1EPG 5|' "$OUTPUT_FILE" 
 # Comprimir el archivo
 gzip -f "$OUTPUT_FILE"
 

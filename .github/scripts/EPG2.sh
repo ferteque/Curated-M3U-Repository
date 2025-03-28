@@ -4,6 +4,7 @@
 EPG_URL="https://opop.pro/tzrVuM4EZku2x"
 OUTPUT_FILE="epg2.xml"
 COMPRESSED_FILE="epg2.xml.gz"
+DATE=$(date +"%Y-%m-%d %H:%M:%S")
 
 # Descargar el archivo EPG
 wget -O "$OUTPUT_FILE" "$EPG_URL"
