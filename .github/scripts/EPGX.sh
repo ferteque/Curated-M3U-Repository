@@ -7,7 +7,7 @@ COMPRESSED_FILE="epgX.xml.gz"
 DATE=$(date +"%Y-%m-%d %H:%M:%S")
 
 # Descargar el archivo EPG
-wget -O "$OUTPUT_FILE" "$EPG_URL"
+wget -O "$COMPRESSED_FILE" "$EPG_URL"
 
 gunzip -f "$COMPRESSED_FILE"
 
