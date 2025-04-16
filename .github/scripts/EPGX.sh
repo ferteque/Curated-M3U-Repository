@@ -22,5 +22,5 @@ git config --global user.name "Ferteque"
 
 # Subir cambios a GitHub
 git add "$COMPRESSED_FILE"
-git commit -m "EPG updated on $DATE"
+git commit -m "EPG updated on $DATE" -f
 git push origin main
