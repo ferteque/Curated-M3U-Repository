@@ -20,6 +20,6 @@ git config --global user.email "ferteque98@gmail.com"
 git config --global user.name "Ferteque"
 
 # Subir cambios a GitHub
-git add "$COMPRESSED_FILE"
+git add -f "$COMPRESSED_FILE"
 git commit -m "EPG updated on $DATE"
 git push origin main
