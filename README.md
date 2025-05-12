@@ -1,3 +1,6 @@
+EACH EPG HAS AN ID IN ITS NAME, THE ID CAN BE FOUND IN THE REPOSITORY: https://repository-server.onrender.com/
+
+
 The main objective of this repository is that people can share their curated lists for different services, countries, and categories. Obviously, providing the EPG is a must to consider it curated. This way, we can ask premium services for more than curated lists and proper EPG.
 
 YOU WILL NEED TO HAVE YOUR OWN SET OF CREDENTIALS FROM Z2U, ALIBABA OR ANY OTHER MARKETPLACE FOR THE LIST SERVICE YOU INTEND TO USE.
@@ -22,7 +25,7 @@ UPLOAD REQUEST:
 
 USING AN M3U FILE
 
-1. Download the M3U file that fits you best from this Google Sheet: https://docs.google.com/spreadsheets/d/1JZ3K-7VKtXdZfnqcUBU2Mv2cGKwgWa73NACNQFrylD4/edit?usp=sharing
+1. Download the M3U file that fits you best: https://repository-server.onrender.com/
 
 2. Open it with the Windows notepad (or any other text editor)
 
