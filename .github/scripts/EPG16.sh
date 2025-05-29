@@ -2,15 +2,15 @@
 
 # Variables
 EPG_URL="https://xmltvfr.fr/xmltv/xmltv_fr.xml.gz"
-OUTPUT_FILE="epg13.xml"
-COMPRESSED_FILE="epg13.xml.gz"
+OUTPUT_FILE="epg16.xml"
+COMPRESSED_FILE="epg16.xml.gz"
 DATE=$(date +"%Y-%m-%d %H:%M:%S")
 
 # Descargar el archivo EPG
 wget -O "$OUTPUT_FILE" "$EPG_URL"
 
 # Modificar la etiqueta <tv generator-info-name>
-sed -i 's|\(<tv generator-info-name="\)[^"]*|\1EPG 13|' "$OUTPUT_FILE" 
+sed -i 's|\(<tv generator-info-name="\)[^"]*|\1EPG 16|' "$OUTPUT_FILE" 
 # Comprimir el archivo
 gzip -f "$OUTPUT_FILE"
 
