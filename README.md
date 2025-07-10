@@ -1,4 +1,5 @@
-EACH EPG HAS AN ID IN ITS NAME, THE ID CAN BE FOUND IN THE REPOSITORY: https://repository-server.onrender.com/
+EACH EPG HAS AN ID IN ITS NAME, THE ID CAN BE FOUND IN THE REPOSITORY: 
+https://repo-server.site
 
 
 The main objective of this repository is that people can share their curated lists for different services, countries, and categories. Obviously, providing the EPG is a must to consider it curated. This way, we can ask premium services for more than curated lists and proper EPG.
