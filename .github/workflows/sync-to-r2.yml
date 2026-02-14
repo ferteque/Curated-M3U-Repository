@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - '*.xml.gz'
+  workflow_dispatch:
 
 jobs:
   upload:
