@@ -20,6 +20,12 @@ jobs:
 
       - name: Trim to last 50 commits
         run: |
+          COUNT=$(git rev-list --count HEAD)
+          if [ "$COUNT" -le 50 ]; then
+            echo "Only $COUNT commits, nothing to trim."
+            exit 0
+          fi
+
           CUTOFF=$(git rev-parse HEAD~50)
           TIP=$(git rev-parse HEAD)
 
