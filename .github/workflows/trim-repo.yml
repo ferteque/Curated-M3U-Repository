@@ -35,4 +35,6 @@ jobs:
 
           git rebase --onto $NEWROOT $CUTOFF $TIP
           git branch -f main HEAD
+          git config http.postBuffer 524288000
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push --force origin main
