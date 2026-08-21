@@ -11,15 +11,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ssh-key: ${{ secrets.EPG_SSH_KEY }}
 
-      - name: Configure Git
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EPG_SSH_KEY }}
+
+      - name: Trim and Push over SSH
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
 
-      - name: Trim to last 50 commits and push
-        run: |
           COUNT=$(git rev-list --count HEAD)
           if [ "$COUNT" -le 50 ]; then
             echo "Only $COUNT commits, nothing to trim."
@@ -34,4 +36,6 @@ jobs:
 
           git rebase --onto "$NEWROOT" "$CUTOFF" "$TIP"
           git branch -f main HEAD
+
+          git remote set-url origin "git@github.com:${{ github.repository }}.git"
           git push --force origin main
