@@ -8,34 +8,32 @@ jobs:
   trim:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.EPG_SSH_KEY }}
 
-      - name: Trim and Push over SSH
+      - uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
 
+      - name: Trim and Push over SSH
+        run: |
           COUNT=$(git rev-list --count HEAD)
           if [ "$COUNT" -le 50 ]; then
             echo "Only $COUNT commits, nothing to trim."
             exit 0
           fi
-
           CUTOFF=$(git rev-parse HEAD~50)
           TIP=$(git rev-parse HEAD)
-
           TREE=$(git rev-parse "$CUTOFF^{tree}")
           NEWROOT=$(git commit-tree "$TREE" -m "History trimmed to last 50 commits")
-
           git rebase --onto "$NEWROOT" "$CUTOFF" "$TIP"
           git branch -f main HEAD
-
           git remote set-url origin "git@github.com:${{ github.repository }}.git"
           git push --force origin main
