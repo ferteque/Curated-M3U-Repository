@@ -4,9 +4,6 @@ on:
     - cron: '0 0 * * 1'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   trim:
     runs-on: ubuntu-latest
@@ -14,16 +11,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.EPG_SSH_KEY }}
 
       - name: Configure Git
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          git config http.version HTTP/1.1
-          git config http.postBuffer 524288000
 
-      - name: Trim to last 50 commits
+      - name: Trim to last 50 commits and push
         run: |
           COUNT=$(git rev-list --count HEAD)
           if [ "$COUNT" -le 50 ]; then
@@ -34,16 +29,9 @@ jobs:
           CUTOFF=$(git rev-parse HEAD~50)
           TIP=$(git rev-parse HEAD)
 
-          # Create a root commit from the 50th commit tree
-          TREE=$(git rev-parse $CUTOFF^{tree})
+          TREE=$(git rev-parse "$CUTOFF^{tree}")
           NEWROOT=$(git commit-tree "$TREE" -m "History trimmed to last 50 commits")
 
-          # Rebase the remaining 50 commits onto the new root
-          git rebase --onto $NEWROOT $CUTOFF $TIP
+          git rebase --onto "$NEWROOT" "$CUTOFF" "$TIP"
           git branch -f main HEAD
-
-          # Clean loose objects to minimize push payload
-          git gc --prune=now
-
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push --force origin main
