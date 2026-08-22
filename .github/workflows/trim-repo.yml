@@ -30,6 +30,10 @@ jobs:
         run: |
           declare -A seen_commits
           while IFS= read -r file; do
+            FILE_COUNT=$(git log --format="%H" -- "$file" | wc -l)
+            if [ "$FILE_COUNT" -lt 50 ]; then
+              continue
+            fi
             COMMIT=$(git log -n 50 --format="%H" -- "$file" | tail -n 1)
             if [ -n "$COMMIT" ]; then
               seen_commits["$COMMIT"]=1
