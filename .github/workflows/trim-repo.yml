@@ -21,7 +21,7 @@ jobs:
       - name: Trim and Push over SSH
         shell: bash
         env:
-          DRY_RUN: "true"
+          DRY_RUN: "false"
         run: |
           declare -A seen_commits
           while IFS= read -r file; do
