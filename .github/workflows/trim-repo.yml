@@ -17,7 +17,7 @@ jobs:
       - name: Trim via GitHub API
         shell: bash
         env:
-          DRY_RUN: "true"
+          DRY_RUN: "false"
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           declare -A seen_commits
