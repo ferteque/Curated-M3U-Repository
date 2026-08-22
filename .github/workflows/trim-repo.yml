@@ -20,6 +20,12 @@ jobs:
           DRY_RUN: "false"
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          API="https://api.github.com/repos/${{ github.repository }}"
+          AUTH="Authorization: Bearer $GH_TOKEN"
+
+          REPO_SIZE=$(curl -sf -H "$AUTH" "$API" | jq '.size')
+          echo "Repo size before trim: ${REPO_SIZE} KB"
+
           declare -A seen_commits
           while IFS= read -r file; do
             FILE_COUNT=$(git log --format="%H" -- "$file" | wc -l)
@@ -83,9 +89,6 @@ jobs:
             exit 0
           fi
 
-          API="https://api.github.com/repos/${{ github.repository }}"
-          AUTH="Authorization: Bearer $GH_TOKEN"
-
           CUTOFF_TREE=$(git rev-parse "$CUTOFF^{tree}")
           echo "Creating root commit via API..."
           NEWROOT=$(curl -sf -X POST "$API/git/commits" \
@@ -123,4 +126,7 @@ jobs:
           curl -sf -X PATCH "$API/git/refs/heads/main" \
             -H "$AUTH" -H "Content-Type: application/json" \
             -d "{\"sha\":\"$PARENT\",\"force\":true}"
-          echo "Done. Zero bytes uploaded."
+
+          AFTER_SIZE=$(curl -sf -H "$AUTH" "$API" | jq '.size')
+          echo "Repo size after trim: ${AFTER_SIZE} KB (old objects still present until GitHub GC runs)"
+          echo "Done."
