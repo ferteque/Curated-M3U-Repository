@@ -41,7 +41,9 @@ jobs:
             exit 0
           fi
 
+          set +o pipefail
           CUTOFF=$(git rev-list --topo-order --reverse "${!seen_commits[@]}" | head -n 1)
+          set -o pipefail
           echo "Cutoff commit: $CUTOFF"
           echo "Cutoff commit message: $(git log -1 --format='%s' $CUTOFF)"
           echo "Cutoff commit date: $(git log -1 --format='%ci' $CUTOFF)"
