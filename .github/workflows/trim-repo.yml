@@ -7,10 +7,6 @@ jobs:
   trim:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.EPG_SSH_KEY }}
       - uses: actions/checkout@main
         with:
           fetch-depth: 0
@@ -18,10 +14,11 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-      - name: Trim and Push over SSH
+      - name: Trim via GitHub API
         shell: bash
         env:
-          DRY_RUN: "false"
+          DRY_RUN: "true"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           declare -A seen_commits
           while IFS= read -r file; do
@@ -86,12 +83,44 @@ jobs:
             exit 0
           fi
 
-          git remote set-url origin "git@github.com:${{ github.repository }}.git"
-          git push origin HEAD:refs/heads/trim-anchor
-          TIP=$(git rev-parse HEAD)
-          TREE=$(git rev-parse "$CUTOFF^{tree}")
-          NEWROOT=$(git commit-tree "$TREE" -m "History trimmed (retaining at least 50 versions per file)")
-          git rebase --onto "$NEWROOT" "$CUTOFF" "$TIP"
-          git branch -f main HEAD
-          git push --force origin main
-          git push origin --delete trim-anchor
+          API="https://api.github.com/repos/${{ github.repository }}"
+          AUTH="Authorization: Bearer $GH_TOKEN"
+
+          CUTOFF_TREE=$(git rev-parse "$CUTOFF^{tree}")
+          echo "Creating root commit via API..."
+          NEWROOT=$(curl -sf -X POST "$API/git/commits" \
+            -H "$AUTH" -H "Content-Type: application/json" \
+            -d "{\"message\":\"History trimmed (retaining at least 50 versions per file)\",\"tree\":\"$CUTOFF_TREE\",\"parents\":[]}" \
+            | jq -r '.sha')
+          echo "New root: $NEWROOT"
+
+          PARENT=$NEWROOT
+          mapfile -t COMMITS < <(git log --reverse --format="%H" "$CUTOFF"..HEAD)
+          TOTAL=${#COMMITS[@]}
+          COUNT=0
+          for COMMIT in "${COMMITS[@]}"; do
+            COUNT=$((COUNT + 1))
+            TREE=$(git rev-parse "$COMMIT^{tree}")
+            MSG=$(git log -1 --format="%s" "$COMMIT")
+            AUTHOR_NAME=$(git log -1 --format="%an" "$COMMIT")
+            AUTHOR_EMAIL=$(git log -1 --format="%ae" "$COMMIT")
+            AUTHOR_DATE=$(git log -1 --format="%aI" "$COMMIT")
+            PAYLOAD=$(jq -n \
+              --arg msg "$MSG" \
+              --arg tree "$TREE" \
+              --arg parent "$PARENT" \
+              --arg aname "$AUTHOR_NAME" \
+              --arg aemail "$AUTHOR_EMAIL" \
+              --arg adate "$AUTHOR_DATE" \
+              '{message:$msg,tree:$tree,parents:[$parent],author:{name:$aname,email:$aemail,date:$adate}}')
+            PARENT=$(curl -sf -X POST "$API/git/commits" \
+              -H "$AUTH" -H "Content-Type: application/json" \
+              -d "$PAYLOAD" | jq -r '.sha')
+            echo "Created commit $COUNT/$TOTAL: $PARENT"
+          done
+
+          echo "Updating main ref to $PARENT..."
+          curl -sf -X PATCH "$API/git/refs/heads/main" \
+            -H "$AUTH" -H "Content-Type: application/json" \
+            -d "{\"sha\":\"$PARENT\",\"force\":true}"
+          echo "Done. Zero bytes uploaded."
