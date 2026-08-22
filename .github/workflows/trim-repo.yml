@@ -1,10 +1,8 @@
 name: Trim Repo
-
 on:
   schedule:
     - cron: '0 0 * * 1'
   workflow_dispatch:
-
 jobs:
   trim:
     runs-on: ubuntu-latest
@@ -13,16 +11,13 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.EPG_SSH_KEY }}
-
       - uses: actions/checkout@main
         with:
           fetch-depth: 0
-
       - name: Configure Git
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-
       - name: Trim and Push over SSH
         shell: bash
         env:
@@ -41,7 +36,7 @@ jobs:
           done < <(git ls-files)
 
           if [ ${#seen_commits[@]} -eq 0 ]; then
-            echo "No tracked files found."
+            echo "No files with more than 50 commits found. Nothing to trim."
             exit 0
           fi
 
@@ -55,6 +50,7 @@ jobs:
               fi
             fi
           done
+
           echo "Cutoff commit: $CUTOFF"
           echo "Cutoff commit message: $(git log -1 --format='%s' $CUTOFF)"
           echo "Cutoff commit date: $(git log -1 --format='%ci' $CUTOFF)"
@@ -66,16 +62,22 @@ jobs:
           fi
 
           COMMITS_TO_DROP=$(git rev-list "$CUTOFF"^ | wc -l)
-          COMMITS_TO_KEEP=$(git rev-list "$CUTOFF".."$(git rev-parse HEAD)" | wc -l)
+          COMMITS_TO_KEEP=$(git rev-list "$CUTOFF"..HEAD | wc -l)
           echo "Commits that would be dropped: $COMMITS_TO_DROP"
           echo "Commits that would be kept: $COMMITS_TO_KEEP"
 
           echo ""
-          echo "Files and their oldest kept commit:"
+          echo "File history after trim:"
           while IFS= read -r file; do
-            COMMIT=$(git log -n 50 --format="%H" -- "$file" | tail -n 1)
-            DATE=$(git log -1 --format="%ci" "$COMMIT" -- "$file")
-            echo "  $file -> $DATE"
+            KEPT=$(git log --format="%H" "$CUTOFF"..HEAD -- "$file" | wc -l)
+            if [ "$KEPT" -eq 0 ]; then
+              echo "  $file -> no commits after cutoff (exists in root snapshot only)"
+            else
+              set +o pipefail
+              OLDEST=$(git log --reverse --format="%ci" "$CUTOFF"..HEAD -- "$file" | head -n 1)
+              set -o pipefail
+              echo "  $file -> $KEPT commits kept, oldest: $OLDEST"
+            fi
           done < <(git ls-files)
 
           if [ "$DRY_RUN" = "true" ]; then
