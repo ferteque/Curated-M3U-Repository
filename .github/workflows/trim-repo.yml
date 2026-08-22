@@ -45,9 +45,16 @@ jobs:
             exit 0
           fi
 
-          set +o pipefail
-          CUTOFF=$(git rev-list --topo-order --reverse "${!seen_commits[@]}" | head -n 1)
-          set -o pipefail
+          CUTOFF=""
+          for commit in "${!seen_commits[@]}"; do
+            if [ -z "$CUTOFF" ]; then
+              CUTOFF="$commit"
+            else
+              if git merge-base --is-ancestor "$commit" "$CUTOFF"; then
+                CUTOFF="$commit"
+              fi
+            fi
+          done
           echo "Cutoff commit: $CUTOFF"
           echo "Cutoff commit message: $(git log -1 --format='%s' $CUTOFF)"
           echo "Cutoff commit date: $(git log -1 --format='%ci' $CUTOFF)"
