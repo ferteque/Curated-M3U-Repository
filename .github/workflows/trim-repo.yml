@@ -3,19 +3,15 @@ on:
   schedule:
     - cron: '0 0 * * 1'
   workflow_dispatch:
+
 jobs:
   trim:
     runs-on: ubuntu-latest
     steps:
       - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EPG_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-          echo "SSH key written, testing connection..."
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -T git@github.com || true
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EPG_SSH_KEY }}
 
       - uses: actions/checkout@main
         with:
@@ -27,39 +23,17 @@ jobs:
           git config user.name "GitHub Actions"
 
       - name: Trim and Push over SSH
-        env:
-          GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -v"
         run: |
-          echo "Total commits: $(git rev-list --count HEAD)"
           COUNT=$(git rev-list --count HEAD)
           if [ "$COUNT" -le 50 ]; then
             echo "Only $COUNT commits, nothing to trim."
             exit 0
           fi
-
           CUTOFF=$(git rev-parse HEAD~50)
           TIP=$(git rev-parse HEAD)
-          echo "CUTOFF: $CUTOFF"
-          echo "TIP: $TIP"
-
           TREE=$(git rev-parse "$CUTOFF^{tree}")
-          echo "TREE: $TREE"
-
           NEWROOT=$(git commit-tree "$TREE" -m "History trimmed to last 50 commits")
-          echo "NEWROOT: $NEWROOT"
-
           git rebase --onto "$NEWROOT" "$CUTOFF" "$TIP"
-          echo "Rebase complete"
-
           git branch -f main HEAD
-          echo "Branch updated"
-
           git remote set-url origin "git@github.com:${{ github.repository }}.git"
-          echo "Remote URL updated"
-
-          echo "Testing SSH before push..."
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -T git@github.com || true
-
-          echo "Pushing..."
           git push --force origin main
-          echo "Push complete"
