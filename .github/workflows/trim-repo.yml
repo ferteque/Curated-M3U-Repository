@@ -1,0 +1,38 @@
+name: Trim Repo
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+jobs:
+  trim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+      - name: Trim to last 50 commits
+        run: |
+          COUNT=$(git rev-list --count HEAD)
+          if [ "$COUNT" -le 50 ]; then
+            echo "Only $COUNT commits, nothing to trim."
+            exit 0
+          fi
+
+          CUTOFF=$(git rev-parse HEAD~50)
+          TIP=$(git rev-parse HEAD)
+
+          git checkout --orphan trimmed $CUTOFF
+          git commit -m "History trimmed"
+          NEWROOT=$(git rev-parse HEAD)
+
+          git rebase --onto $NEWROOT $CUTOFF $TIP
+          git branch -f main HEAD
+          git push --force origin main
