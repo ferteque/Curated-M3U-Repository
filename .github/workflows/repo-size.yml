@@ -1,0 +1,14 @@
+name: Repo Size
+on:
+  workflow_dispatch:
+jobs:
+  size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check repo size
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SIZE=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }} | jq '.size')
+          echo "Repo size: ${SIZE} KB"
